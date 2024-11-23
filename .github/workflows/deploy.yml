@@ -23,15 +23,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. application.yml 생성 (GitHub Secrets 사용)
-      - name: Create application.yml
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
-
-      # 4. Gradle로 빌드
+      # 3. Gradle로 JAR 빌드
       - name: Build with Gradle
         run: ./gradlew clean build
+
+      # 4. JAR 파일 Docker 컨텍스트로 복사
+      - name: Copy JAR file
+        run: cp build/libs/spring-boot-server-0.0.1-SNAPSHOT.jar .
 
       # 5. Docker 로그인
       - name: Docker Login
@@ -61,5 +59,3 @@ jobs:
             docker stop spring-server || true
             docker rm spring-server || true
             docker run -d --name spring-server -p 8081:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server:latest
-
-
