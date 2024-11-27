@@ -61,7 +61,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-server  # Docker Hub에서 이미지를 풀
-            docker rm -f spring-server || true  # 기존 컨테이너가 있으면 강제로 삭제
-            docker run -d --name spring-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server  # 새 컨테이너 실행
-            docker rm $(docker ps --filter 'status=exited' -a -q)  # 종료된 컨테이너 제거
+            docker pull ${{ secrets.DOCKER_USERNAME}}/spring-boot-server
+            docker rm -f spring-server || echo "No existing container to remove"
+            docker run -d --name spring-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/spring-boot-server
+            docker rm $(docker ps --filter 'status=exited' -a -q) || echo "No exited containers to remove"
